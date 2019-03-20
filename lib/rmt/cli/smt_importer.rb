@@ -64,45 +64,66 @@ WARNING
     end
   end
 
+  # FIXME preserve last_seen_at?
   def import_systems
+    count = 0
+
+    client = ActiveRecord::Base.connection.raw_connection
+    statement = client.prepare(
+      'INSERT IGNORE INTO systems SET
+        login = ?, password = ?, hostname = ?, registered_at = FROM_UNIXTIME(?), created_at = NOW(), updated_at = NOW()'
+    )
+
     read_csv('systems').each do |row|
       login, password, hostname, registered_at = row
 
-      next unless System.find_by(login: login, password: password).nil?
+      statement.execute(login, password, hostname, registered_at)
 
-      # rubocop:disable Rails/TimeZone
-      System.create!(
-        login: login,
-        password: password,
-        hostname: hostname,
-        registered_at: Time.at(registered_at.to_i)
-      )
-      # rubocop:enable Rails/TimeZone
-      puts _('Imported system %{system}') % { system: login }
+      count += 1
+      puts "Imported #{count} systems" if (count % 1000 == 0)
     end
+
+    puts "Imported #{count} systems"
   end
 
   def import_activations
+    products = {}
+    Product.all.each do |product|
+      products[product.id] = product.service.id
+    end
+
+    systems = {}
+    System.all.each do |system|
+      systems[system.login] = system.id
+    end
+
+    client = ActiveRecord::Base.connection.raw_connection
+    statement = client.prepare(
+      'INSERT IGNORE INTO activations SET
+        service_id = ?, system_id = ?, created_at = NOW(), updated_at = NOW()'
+    )
+
+    count = 0
     read_csv('activations').each do |row|
       login, product_id = row
 
-      product = Product.find_by(id: product_id)
-      system = System.find_by(login: login)
+      system_id = systems[login]
+      service_id = products[product_id.to_i]
 
-      if !system
+      if !system_id
         warn _('System %{system} not found') % { system: login }
         next
-      elsif !product
+      elsif !service_id
         warn _('Product %{product} not found') % { product: product_id }
         next
       else
-        activation = Activation.find_by(system: system, service: product.service)
-        unless activation
-          Activation.create!(system: system, service: product.service)
-          puts _('Imported activation of %{product} for %{system}') % { product: product_id, system: login }
-        end
+        statement.execute(service_id, system_id)
+        count += 1
+        puts "Imported #{count} activations" if (count % 1000 == 0)
       end
     end
+
+    puts "Imported #{count} activations"
   end
 
   def import_hardware_info
@@ -131,6 +152,8 @@ WARNING
   end
 
   def run(argv)
+    Time.zone ||= 'UTC'
+
     parse_cli_arguments argv
     check_products_exist
 
@@ -144,7 +167,7 @@ WARNING
     ActiveRecord::Base.transaction do
       import_systems
       import_activations
-      import_hardware_info
+      #import_hardware_info
     end
   end
 
