@@ -85,8 +85,10 @@ This package extends the basic RMT functionality with capabilities
 required for public cloud environments.
 
 %prep
-mkdir -p vendor/cache
-cp %{_sourcedir}/*.gem vendor/cache
+if [ -d vendor/cache ]; then
+  mkdir -p vendor/cache
+  cp %{_sourcedir}/*.gem vendor/cache
+fi
 
 %setup -q
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
