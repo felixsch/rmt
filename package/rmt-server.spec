@@ -103,13 +103,26 @@ mkdir -p %{buildroot}%{app_dir}
 mkdir -p %{buildroot}%{conf_dir}/ssl
 mkdir -p %{buildroot}%{data_dir}/regsharing
 
-mv tmp %{buildroot}%{data_dir}
+mkdir -p %{buildroot}%{data_dir}/{tmp, log, repo, suma}
 mkdir %{buildroot}%{data_dir}/public
 mv public/repo %{buildroot}%{data_dir}/public/
 mv public/suma %{buildroot}%{data_dir}/public/
+mv public/tools %{buildroot}%{data_dir}/public/
 mv vendor/cache %{buildroot}%{lib_dir}
 
-cp -ar . %{buildroot}%{app_dir}
+cp -r app %{buildroot}%{app_dir}
+cp -r bin %{buildroot}%{app_dir}
+cp -r config* %{buildroot}%{app_dir}
+cp -r db %{buildroot}%{app_dir}
+cp -r lib %{buildroot}%{app_dir}
+cp -r engines %{buildroot}%{app_dir}
+
+cp -r Rakefile %{buildroot}%{app_dir}
+cp -r .bundle %{buildroot}%{app_dir}
+cp -r engines %{buildroot}%{app_dir}
+
+cp -r locale %{buildroot}%{app_dir}
+
 ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
 ln -s %{data_dir}/public/repo %{buildroot}%{app_dir}/public/repo
 ln -s %{data_dir}/public/suma %{buildroot}%{app_dir}/public/suma
