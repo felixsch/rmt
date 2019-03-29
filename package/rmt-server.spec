@@ -91,7 +91,6 @@ cp -r %{_sourcedir}/vendor/cache vendor/cache
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
 
 %build
-bundle.%{ruby_version} config.build.nokogiri --use-system-libraries
 bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}} --without test development --deployment --standalone
 
 %install
