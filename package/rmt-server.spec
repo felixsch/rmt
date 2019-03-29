@@ -85,8 +85,10 @@ This package extends the basic RMT functionality with capabilities
 required for public cloud environments.
 
 %prep
-mkdir vendor
-cp %{_sourcedir}/*.gem vendor
+if [ ! -d vendor/cache ]; then
+  mkdir -p vendor/cache
+  cp %{_sourcedir}/*.gem vendor/cache
+fi
 
 %setup -q
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
@@ -94,7 +96,7 @@ sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
 %build
 export GEM_HOME=$PWD/vendor GEM_PATH=$PWD/vendor PATH=$PWD/vendor/bin:$PATH
 
-gem.%{ruby_version} install vendor/bundle.*.gem
+gem.%{ruby_version} install vendor/cache/bundle.*.gem
 bundle.%{ruby_version} config.build.nokogiri --use-system-libraries
 bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}} --without test development --deployment --standalone
 
@@ -109,7 +111,7 @@ mv tmp %{buildroot}%{data_dir}
 mkdir %{buildroot}%{data_dir}/public
 mv public/repo %{buildroot}%{data_dir}/public/
 mv public/suma %{buildroot}%{data_dir}/public/
-mv vendor %{buildroot}%{lib_dir}
+mv vendor/cache %{buildroot}%{lib_dir}
 
 cp -ar . %{buildroot}%{app_dir}
 ln -s %{data_dir}/tmp %{buildroot}%{app_dir}/tmp
