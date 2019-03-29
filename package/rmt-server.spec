@@ -145,7 +145,7 @@ ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-sync
 ln -fs %{_sbindir}/service %{buildroot}%{_sbindir}/rcrmt-server-regsharing
 
 mkdir -p %{buildroot}%{_sysconfdir}
-mv %{_builddir}/package/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
+mv %{buildroot}/package/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 
 # nginx
 install -D -m 644 package/nginx-http.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
