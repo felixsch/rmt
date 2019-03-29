@@ -92,7 +92,6 @@ sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
 
 %build
 export GEM_HOME=$PWD/vendor GEM_PATH=$PWD/vendor PATH=$PWD/vendor/bin:$PATH
-gem.%{ruby_version} install vendor/cache/bundle*.gem
 bundle.%{ruby_version} config.build.nokogiri --use-system-libraries
 bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}} --without test development --deployment --standalone
 
