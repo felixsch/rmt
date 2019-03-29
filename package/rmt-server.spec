@@ -150,7 +150,7 @@ mv package/rmt.conf %{buildroot}%{_sysconfdir}/rmt.conf
 # nginx
 install -D -m 644 package/nginx-http.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-http.conf
 install -D -m 644 package/nginx-https.conf %{buildroot}%{_sysconfdir}/nginx/vhosts.d/rmt-server-https.conf
-install -D -m 644 package/auth-headers.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
+install -D -m 644 package/auth-handler.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-handler.conf
 install -D -m 644 package/auth-location.conf %{buildroot}%{_sysconfdir}/nginx/rmt-auth.d/auth-location.conf
 install -D -m 644 package/http-certs.conf %{buildroot}%{_sysconfdir}/nginx/rmt-pubcloud.d/http-certs.conf
 
