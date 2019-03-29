@@ -22,6 +22,9 @@ gem 'activemodel', '~> 5.1.3'
 gem 'activerecord', '~> 5.1.3'
 gem 'railties', '~> 5.1.3'
 
+# Building the man pages
+gem 'ronn'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
@@ -54,7 +57,6 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'spring-commands-rspec'
-  gem 'ronn'
   gem 'guard-rspec', require: false
 end
 
