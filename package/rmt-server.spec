@@ -86,8 +86,7 @@ required for public cloud environments.
 
 %prep
 if [ ! -d vendor/cache ]; then
-  mkdir -p vendor/cache
-  cp %{_sourcedir}/*.gem vendor/cache
+  cp -r %{_sourcedir}/vendor/cache vendor/cache
 fi
 
 %setup -q
