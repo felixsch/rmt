@@ -33,6 +33,7 @@
 
 Name:           rmt-server
 Release:        0
+Version:        xxx
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
 Group:          Productivity/Networking/Web/Proxy
