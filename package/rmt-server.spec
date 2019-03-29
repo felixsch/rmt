@@ -93,6 +93,9 @@ sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
 %build
 bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}} --without test development --deployment --standalone
 
+# build man pages
+bundle.%{ruby_version} exec ronn --roff --pipe --manual RMT MANUAL.md > rmt-cli.8 && gzip -f rmt-cli.8
+
 %install
 mkdir -p %{buildroot}%{data_dir}
 mkdir -p %{buildroot}%{lib_dir}
