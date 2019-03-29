@@ -20,41 +20,24 @@
 %define lib_dir %{_libdir}/rmt
 %define data_dir %{_localstatedir}/lib/rmt
 %define conf_dir %{_sysconfdir}/rmt
+
 %define rmt_user    _rmt
 %define rmt_group   nginx
+
 %if 0%{?suse_version} == 1315
 %define is_sle_12_family 1
 %define ruby_version ruby2.5
 %else
 %define ruby_version %{rb_default_ruby_suffix}
 %endif
+
 Name:           rmt-server
-Version:        1.2.7
 Release:        0
 Summary:        Repository mirroring tool and registration proxy for SCC
 License:        GPL-2.0-or-later
 Group:          Productivity/Networking/Web/Proxy
 URL:            https://software.opensuse.org/package/rmt-server
 Source0:        %{name}-%{version}.tar.bz2
-Source1:        rmt-server-rpmlintrc
-Source2:        rmt.conf
-Source3:        rmt-cli.8.gz
-Source4:        nginx-http.conf
-Source5:        rmt-server-mirror.service
-Source6:        rmt-server-mirror.timer
-Source7:        rmt-server-sync.service
-Source8:        rmt-server-sync.timer
-Source9:        rmt-server.service
-Source10:       rmt-server.target
-Source11:       rmt-server-migration.service
-Source12:       rmt-server-sync-sles12.timer
-Source13:       rmt-server-mirror-sles12.timer
-Source14:       nginx-https.conf
-Source15:       auth-handler.conf
-Source16:       auth-location.conf
-Source17:       rmt-cli_bash-completion.sh
-Source18:       rmt-server.reg
-Source19:       http-certs.conf
 BuildRequires:  fdupes
 BuildRequires:  gcc
 BuildRequires:  libcurl-devel
@@ -101,11 +84,17 @@ This package extends the basic RMT functionality with capabilities
 required for public cloud environments.
 
 %prep
-cp -p %{SOURCE2} .
+mkdir -p vendor/cache
+cp %{_sourcedir}/*.gem vendor/cache
 
 %setup -q
 sed -i '1 s|/usr/bin/env\ ruby|/usr/bin/ruby.%{ruby_version}|' bin/*
+
 %build
+export GEM_HOME=$PWD/vendor GEM_PATH=$PWD/vendor PATH=$PWD/vendor/bin:$PATH
+
+gem.%{ruby_version} install vendor/cache/bundle.*.gem
+bundle.%{ruby_version} config.build.nokogiri --use-system-libraries
 bundle.%{ruby_version} install %{?jobs:--jobs %{jobs}} --without test development --deployment --standalone
 
 %install
